@@ -2,6 +2,7 @@
 A Derby SQL group project involving modelling a worldwide flight recording database.
 
 Project requirements/specifications:
+
 You are designing a database to track airline related information. I'm a frequent flyer and have found that existing airline reservation systems just don't provide the data and reports that I need to handle all my travel so I've hired you to create a specialized airline database just for me. Let's name this system "mifly". 
 In my travels, I have flown into and out of many different airports. Each of these airports has a name, a location, and an FAA-approved abbreviation. For example: Dulles Airport, Washington DC, IAD or Kennedy Airport, New York, JFK. Sometimes an area is so large that is can be serviced by multiple airports. If my destination again happens to be the Washington DC area, I can fly into Dulles airport, Reagan National Airport or Baltimore Washington International Airport. New York is serviced by Kennedy, La Guardia and Newark. 
 
@@ -23,3 +24,6 @@ You may assume that all flights are non-stop. You don't need to worry about chan
 Model this enterprise using only the information supplied here. Do not model any processes not mentioned here such as payments, travel agents, customers, etc. 
 You should use your knowledge of airlines and flying in general, and you may want to pay new, closer attention to details of the operation of any airline or airport sites you may visit on the web as you are working on this assignment. 
 
+Each team member will add one more business rules (requirements) to the above business rules.  You will have to provide some means to enforce these business rules in your database, either by means database constraint such as referential integrity, uniqueness constraint, not null constraint, trigger, function, stored procedure or the like.  The business rule needs to be something that will show up in the model of your design.  None of your additional business rules can contradict any of the business rules provided in the project definition.
+
+Each team member will also have to create one more query related to those business rules.
