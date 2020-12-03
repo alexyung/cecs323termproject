@@ -135,7 +135,8 @@ CREATE TABLE crewMember (
     CONSTRAINT cm_cm_FK FOREIGN KEY (substituteNumber)
         REFERENCES crewMember (FAACrewNumber),
     CONSTRAINT cm_fs_FK FOREIGN KEY (scheduleNumber)
-        REFERENCES flightschedule (scheduleNumber)
+        REFERENCES flightschedule (scheduleNumber),
+    CONSTRAINT recursive_check CHECK (substituteNumber != FAACrewNumber)
 );
 
 CREATE TABLE incidentReport (
