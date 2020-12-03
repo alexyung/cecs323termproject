@@ -64,9 +64,9 @@ CREATE TABLE flightSchedule(
     departureAirport VARCHAR(5) NOT NULL, 
     arrivalAirport VARCHAR(5) NOT NULL,
     airlineName VARCHAR (50) NOT NULL,
-    departureTime TIMESTAMP NOT NULL, 
-    arrivalTime TIMESTAMP NOT NULL, 
-    flightDuration TIMESTAMP NOT NULL,
+    departureTime TIME NOT NULL, 
+    arrivalTime TIME NOT NULL, 
+    flightDuration TIME NOT NULL,
     CONSTRAINT flightschedule_PK PRIMARY KEY (scheduleNumber),
     CONSTRAINT fs_dap_FK FOREIGN KEY (departureAirport)
         REFERENCES airport (FAAAbbreviation),
@@ -82,8 +82,8 @@ CREATE TABLE flightInstance (
     instanceNumber INTEGER,
     scheduleNumber INTEGER NOT NULL, 
     date DATE NOT NULL, 
-    departureActual TIMESTAMP NOT NULL,
-    arrivalActual TIMESTAMP NOT NULL,
+    departureActual TIME NOT NULL,
+    arrivalActual TIME NOT NULL,
     planeNumber INTEGER NOT NULL,
     CONSTRAINT flightinstance_PK PRIMARY KEY(instanceNumber),
     CONSTRAINT fi_fs_FK FOREIGN KEY (scheduleNumber)
@@ -143,7 +143,7 @@ CREATE TABLE incidentReport (
     reporter INTEGER NOT NULL, 
     reported INTEGER NOT NULL, 
     incident VARCHAR(20), 
-    timestamp TIMESTAMP NOT NULL, 
+    timestamp TIME NOT NULL, 
     detail VARCHAR(300) NOT NULL,
     CONSTRAINT incidentreport_PK PRIMARY KEY(reportNumber),
     CONSTRAINT ir_cma_FK FOREIGN KEY (reporter)
