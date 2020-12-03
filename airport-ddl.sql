@@ -1,25 +1,165 @@
-CREATE TABLE airport ( FAAAbreviation VARCHAR(5) PRIMARY KEY,airportName varchar(50) NOT NULL, city varchar(50) NOT NULL,[state] varchar(50) NOT NULL,country varchar(50) NOT NULL )
+/*
+--DROP ALL TABLES AND INDICES
+DROP INDEX flightschedule_CK;
+DROP INDEX flightinstance_CK
+DROP INDEX incidentreport_CK;
+DROP TABLE airlineservice;
+DROP TABLE sale;
+DROP TABLE implication;
+DROP TABLE unchargeableFlight;
+DROP TABLE chargeableFlight;
+DROP TABLE flightInstance;
+DROP TABLE incidentReport;
+DROP TABLE crewMember;
+DROP TABLE flightSchedule;
+DROP TABLE airport;
+DROP TABLE plane;
+DROP TABLE airline;
+DROP TABLE amenity;
+*/
 
-CREATE TABLE airline (airlinename varchar(50) PRIMARY KEY, headquarters varchar(50) not null, [range] VARCHAR (15) not null);
+CREATE TABLE airport ( 
+    FAAAbbreviation VARCHAR(5),
+    airportName VARCHAR(50) NOT NULL, 
+    city VARCHAR(50) NOT NULL,
+    state VARCHAR(50),
+    country VARCHAR(50) NOT NULL,
+    CONSTRAINT airport_PK PRIMARY KEY (FAAAbbreviation)
+);
 
-CREATE TABLE airlineservice (FAAAbreviation VARCHAR(5) FOREIGN KEY REFERENCES airport(FAAAbreviation) not null,airlinename VARCHAR(50) FOREIGN KEY REFERENCES airline(airlinename) not null , PRIMARY KEY (FAAAbreviation, airlinename))
+CREATE TABLE airline (
+    airlineName VARCHAR(50), 
+    hqCity VARCHAR(50) NOT NULL,
+    hqState VARCHAR(50),
+    hqCountry VARCHAR(50) NOT NULL,
+    range VARCHAR (15) NOT NULL CONSTRAINT RANGE_CONSTRAINT
+        CHECK (range in ('LOCAL', 'DOMESTIC', 'INTERNATIONAL')),
+    CONSTRAINT airline_PK PRIMARY KEY (airlineName)
+);
 
-CREATE TABLE plane (FAANumber INT PRIMARY KEY, airlinename varchar(50) FOREIGN KEY REFERENCES airline(airlinename) not null, manufacturer VARCHAR (50) not null,model VARCHAR (50) not null,passengerLimit INT NOT NULL, planeName varchar(50))
+CREATE TABLE airlineservice (
+    FAAAbbreviation VARCHAR(5) NOT NULL,
+    airlineName VARCHAR(50) NOT NULL,
+    CONSTRAINT airlineservice_PK PRIMARY KEY (FAAAbbreviation, airlineName),
+    CONSTRAINT as_ap_FK FOREIGN KEY (FAAAbbreviation)
+        REFERENCES airport (FAAAbbreviation),
+    CONSTRAINT as_al_FK FOREIGN KEY (airlineName)
+        REFERENCES airline (airlineName)
+);
 
-CREATE TABLE flightSchedule(scheduleNumber INT PRIMARY KEY, departureAirport varchar(5) FOREIGN KEY REFERENCES airport(FAAAbreviation) not null, arrivalAirport varchar(5) FOREIGN KEY REFERENCES airport(FAAAbreviation) not null,airlineName varchar (50) FOREIGN KEY REFERENCES airline(airlinename) not null,departureTime TIME not null, arrivalTime TIME not null, flightDuration time not null)
+CREATE TABLE plane (
+    FAANumber INTEGER, 
+    airlineName VARCHAR(50) NOT NULL, 
+    manufacturer VARCHAR (50) NOT NULL,
+    model VARCHAR (50) NOT NULL,
+    passengerLimit INTEGER NOT NULL, 
+    planeName VARCHAR(50),
+    CONSTRAINT plane_PK PRIMARY KEY (FAANumber),
+    CONSTRAINT p_al_FK FOREIGN KEY (airlineName)
+        REFERENCES airline (airlineName)
+);
 
-CREATE TABLE flightInstance (instanceNumber INT PRIMARY KEY, scheduleNumber INT FOREIGN KEY REFERENCES flightSchedule(scheduleNumber) NOT NULL, [date] DATE not null, departureActual TIME,arivalActual TIME,planeNumber int Foreign Key REFERENCES plane (FAANumber) not null)
+CREATE TABLE flightSchedule(
+    scheduleNumber INTEGER, 
+    departureAirport VARCHAR(5) NOT NULL, 
+    arrivalAirport VARCHAR(5) NOT NULL,
+    airlineName VARCHAR (50) NOT NULL,
+    departureTime TIMESTAMP NOT NULL, 
+    arrivalTime TIMESTAMP NOT NULL, 
+    flightDuration TIMESTAMP NOT NULL,
+    CONSTRAINT flightschedule_PK PRIMARY KEY (scheduleNumber),
+    CONSTRAINT fs_dap_FK FOREIGN KEY (departureAirport)
+        REFERENCES airport (FAAAbbreviation),
+    CONSTRAINT fs_aap_FK FOREIGN KEY (arrivalAirport)
+        REFERENCES airport (FAAAbbreviation),
+    CONSTRAINT fs_al_FK FOREIGN KEY (airlineName)
+        REFERENCES airline (airlineName)
+);
 
-CREATE TABLE unchargeableFlight (instanceNumber int FOREIGN KEY references flightInstance(instanceNumber) Not null, Primary key (instanceNumber))
+CREATE UNIQUE INDEX flightschedule_CK ON flightschedule (departureAirport, arrivalAirport, airlineName, departureTime, arrivalTime);
 
-CREATE TABLE chargeableFlight (instanceNumber int FOREIGN KEY references flightInstance(instanceNumber) Not null, Primary key (instanceNumber))
+CREATE TABLE flightInstance (
+    instanceNumber INTEGER,
+    scheduleNumber INTEGER NOT NULL, 
+    date DATE NOT NULL, 
+    departureActual TIMESTAMP NOT NULL,
+    arrivalActual TIMESTAMP NOT NULL,
+    planeNumber INTEGER NOT NULL,
+    CONSTRAINT flightinstance_PK PRIMARY KEY(instanceNumber),
+    CONSTRAINT fi_fs_FK FOREIGN KEY (scheduleNumber)
+        REFERENCES flightschedule (scheduleNumber),
+    CONSTRAINT fi_p_FK FOREIGN KEY (planeNumber)
+        REFERENCES plane (FAANumber)
+);
 
-CREATE TABLE amenity ([type] varchar(50) primary key)
+CREATE UNIQUE INDEX flightinstance_CK ON flightinstance (schedulenumber, date);
 
-CREATE TABLE  sale (instanceNumber int FOREIGN KEY references chargeableFlight(instanceNumber) not null, [type] varchar(50) FOREIGN KEY REFERENCES amenity(type) not null, PRIMARY KEY (instanceNumber, [type] ))
+CREATE TABLE unchargeableFlight (
+    instanceNumber INTEGER NOT NULL,
+    CONSTRAINT unchargeableflight_PK PRIMARY KEY(instanceNumber),
+    CONSTRAINT uf_fi_FK FOREIGN KEY (instanceNumber)
+        REFERENCES flightinstance (instanceNumber)
+);
 
-CREATE TABLE crewMember (faacrewNumber int primary key, substituteNumber int references crewMember(faacrewNumber),lastName VARCHAR(40) not null,firstName VARCHAR(40)not null, backgroundCheck bit not null, [role] varChar (50) not null, scheduleNumber int FOREIGN KEY REFERENCES flightSchedule(scheduleNumber) not null)
+CREATE TABLE chargeableFlight (
+    instanceNumber INTEGER NOT NULL,
+    CONSTRAINT chargeableflight_PK PRIMARY KEY(instanceNumber),
+    CONSTRAINT cf_fi_FK FOREIGN KEY (instanceNumber)
+        REFERENCES flightinstance (instanceNumber)
+);
 
-CREATE TABLE incidentReport (reportNumber int primary key, reporter int Foreign key references crewMember (faaCrewNumber) not null, reported int Foreign key references crewMember (faaCrewNumber) not null, incident varchar(20), [timestamp] DateTime  not null, detail varchar (300) not null)
+CREATE TABLE amenity (
+    type VARCHAR(50),
+    CONSTRAINT amenity_PK PRIMARY KEY(type)
+);
 
-CREATE TABLE implication (instanceNmber int foreign key references flightInstance(instanceNumber) not null, reportNumber int foreign key references incidentReport(reportNumber)  not null)
+CREATE TABLE sale (
+    instanceNumber INTEGER NOT NULL, 
+    type VARCHAR(50) NOT NULL,
+    CONSTRAINT sale_PK PRIMARY KEY(instanceNumber, type),
+    CONSTRAINT s_cf_FK FOREIGN KEY (instanceNumber)
+        REFERENCES chargeableflight (instanceNumber),
+    CONSTRAINT s_a_FK FOREIGN KEY (type)
+        REFERENCES amenity (type)
+);
+
+CREATE TABLE crewMember (
+    FAACrewNumber INTEGER, 
+    substituteNumber INTEGER,
+    lastName VARCHAR(40) NOT NULL,
+    firstName VARCHAR(40) NOT NULL, 
+    backgroundCheck BOOLEAN NOT NULL, 
+    role VARCHAR (50) NOT NULL, 
+    scheduleNumber INTEGER NOT NULL,
+    CONSTRAINT crewmember_PK PRIMARY KEY(FAACrewNumber),
+    CONSTRAINT cm_cm_FK FOREIGN KEY (substituteNumber)
+        REFERENCES crewMember (FAACrewNumber),
+    CONSTRAINT cm_fs_FK FOREIGN KEY (scheduleNumber)
+        REFERENCES flightschedule (scheduleNumber)
+);
+
+CREATE TABLE incidentReport (
+    reportNumber INTEGER, 
+    reporter INTEGER NOT NULL, 
+    reported INTEGER NOT NULL, 
+    incident VARCHAR(20), 
+    timestamp TIMESTAMP NOT NULL, 
+    detail VARCHAR(300) NOT NULL,
+    CONSTRAINT incidentreport_PK PRIMARY KEY(reportNumber),
+    CONSTRAINT ir_cma_FK FOREIGN KEY (reporter)
+        REFERENCES crewmember (FAACrewNumber),
+    CONSTRAINT ir_cmb_FK FOREIGN KEY (reported)
+        REFERENCES crewmember (FAACrewNumber)
+);
+
+CREATE UNIQUE INDEX incidentreport_CK ON incidentreport (reporter, reported, incident, timestamp);
+
+CREATE TABLE implication (
+    instanceNumber INTEGER NOT NULL, 
+    reportNumber INTEGER NOT NULL,
+    CONSTRAINT implication_PK PRIMARY KEY(instanceNumber, reportNumber),
+    CONSTRAINT i_fi_FK FOREIGN KEY (instanceNumber)
+        REFERENCES flightinstance (instanceNumber),
+    CONSTRAINT i_ir_FK FOREIGN KEY (reportNumber)
+        REFERENCES incidentreport (reportNumber)
+);
