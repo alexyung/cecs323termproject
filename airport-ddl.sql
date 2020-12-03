@@ -19,7 +19,7 @@ DROP TABLE amenity;
 */
 
 CREATE TABLE airport ( 
-    FAAAbbreviation VARCHAR(5),
+    FAAAbbreviation VARCHAR(5) NOT NULL,
     airportName VARCHAR(50) NOT NULL, 
     city VARCHAR(50) NOT NULL,
     state VARCHAR(50),
@@ -48,7 +48,7 @@ CREATE TABLE airlineservice (
 );
 
 CREATE TABLE plane (
-    FAANumber INTEGER, 
+    FAANumber INTEGER NOT NULL, 
     airlineName VARCHAR(50) NOT NULL, 
     manufacturer VARCHAR (50) NOT NULL,
     model VARCHAR (50) NOT NULL,
@@ -60,7 +60,7 @@ CREATE TABLE plane (
 );
 
 CREATE TABLE flightSchedule(
-    scheduleNumber INTEGER, 
+    scheduleNumber INTEGER NOT NULL, 
     departureAirport VARCHAR(5) NOT NULL, 
     arrivalAirport VARCHAR(5) NOT NULL,
     airlineName VARCHAR (50) NOT NULL,
@@ -79,7 +79,7 @@ CREATE TABLE flightSchedule(
 CREATE UNIQUE INDEX flightschedule_CK ON flightschedule (departureAirport, arrivalAirport, airlineName, departureTime, arrivalTime);
 
 CREATE TABLE flightInstance (
-    instanceNumber INTEGER,
+    instanceNumber INTEGER NOT NULL,
     scheduleNumber INTEGER NOT NULL, 
     date DATE NOT NULL, 
     departureActual TIME NOT NULL,
@@ -109,7 +109,7 @@ CREATE TABLE chargeableFlight (
 );
 
 CREATE TABLE amenity (
-    type VARCHAR(50),
+    type VARCHAR(50) NOT NULL,
     CONSTRAINT amenity_PK PRIMARY KEY(type)
 );
 
@@ -124,7 +124,7 @@ CREATE TABLE sale (
 );
 
 CREATE TABLE crewMember (
-    FAACrewNumber INTEGER, 
+    FAACrewNumber INTEGER NOT NULL, 
     substituteNumber INTEGER,
     lastName VARCHAR(40) NOT NULL,
     firstName VARCHAR(40) NOT NULL, 
@@ -140,12 +140,12 @@ CREATE TABLE crewMember (
 );
 
 CREATE TABLE incidentReport (
-    reportNumber INTEGER, 
+    reportNumber INTEGER NOT NULL, 
     reporter INTEGER NOT NULL, 
     reported INTEGER NOT NULL, 
-    incident VARCHAR(20), 
+    incident VARCHAR(20) NOT NULL, 
     timestamp TIME NOT NULL, 
-    detail VARCHAR(300) NOT NULL,
+    detail VARCHAR(300),
     CONSTRAINT incidentreport_PK PRIMARY KEY(reportNumber),
     CONSTRAINT ir_cma_FK FOREIGN KEY (reporter)
         REFERENCES crewmember (FAACrewNumber),
