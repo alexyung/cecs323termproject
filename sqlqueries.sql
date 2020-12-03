@@ -15,10 +15,10 @@ select departureAirport, departureTime, arrivalAirport, arrivalTime from flights
 order by flightDuration desc;
 
 --Flight schedules that charge for extras (water, etc.)
-select distinct schedulenumber from schedulenumber natural join flightinstance natural join chargeableflights;
+select distinct schedulenumber from chargeableflights natural join flightinstance natural join flightschedule;
 
 --The crew roster for each flight schedule for each airline
-select lastname, firstname, role from crewmember natural join flightschedule natural join airline
+select airlinename, schedulenumber, role, lastname, firstname from crewmember natural join flightschedule natural join airline
 order by airlinename, schedulenumber, role desc;
 
 --The trips that are available if you do make one stop over 
@@ -28,7 +28,7 @@ select a.departureAirport, a.arrivalAirport as "Stopover", b.arrivalAirport from
 
 
 --A list of all incident reports by flight instance
-select reporter, reported, incident, schedulenumber, date from incidentreport natural join implication natural join flightinstance
+select instancenumber, reportnumber, reporter, reported, incident, date from incidentreport natural join implication natural join flightinstance
 group by instancenumber;
 
 --Flight instances that are scheduled to depart in three days
