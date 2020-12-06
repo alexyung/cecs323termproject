@@ -66,7 +66,7 @@ CREATE TABLE flightSchedule(
     airlineName VARCHAR (50) NOT NULL,
     departureTime TIME NOT NULL, 
     arrivalTime TIME NOT NULL, 
-    flightDuration TIME NOT NULL,
+    flightDuration INTEGER NOT NULL,
     CONSTRAINT flightschedule_PK PRIMARY KEY (scheduleNumber),
     CONSTRAINT fs_dap_FK FOREIGN KEY (departureAirport)
         REFERENCES airport (FAAAbbreviation),
@@ -84,6 +84,7 @@ CREATE TABLE flightInstance (
     date DATE NOT NULL, 
     departureActual TIME NOT NULL,
     arrivalActual TIME NOT NULL,
+    flightDurationActual INTEGER NOT NULL,
     planeNumber INTEGER NOT NULL,
     CONSTRAINT flightinstance_PK PRIMARY KEY(instanceNumber),
     CONSTRAINT fi_fs_FK FOREIGN KEY (scheduleNumber)
