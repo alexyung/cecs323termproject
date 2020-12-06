@@ -57,6 +57,5 @@ select reportnumber, reporter, reported from incidentreport where reportnumber i
 select instancenumber,
 case when flightinstance.departureActual <= flightSchedule.departureTime THEN 'ON TIME' 
 ELSE 'DELAYED' END AS Status
-from
-flightinstance natural
-join flightschedule
+from flightinstance 
+natural join flightschedule
