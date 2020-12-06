@@ -59,3 +59,11 @@ case when flightinstance.departureActual <= flightSchedule.departureTime THEN 'O
 ELSE 'DELAYED' END AS Status
 from flightinstance 
 natural join flightschedule
+
+--Return flight instances with departiure time, arrival time, and flight duration
+SELECT flightInstance.INSTANCENUMBER AS "FLIGHTINSTANCE", flightInstance.FLIGHTDURATIONACTUAL AS "FLIGHTDURATION",
+flightSchedule.DEPARTUREAIRPORT AS "DEP_AIRPORT", flightInstance.DEPARTUREACTUAL AS "DEP_AIRPORT_DEPARTURETIME", 
+flightSchedule.ARRIVALAIRPORT As "ARR_AIRPORT", flightInstance.ARRIVALACTUAL AS "ARR_AIRPORT_ARRIVALTIME"
+FROM flightInstance
+INNER JOIN flightSchedule ON flightSchedule.SCHEDULENUMBER = flightInstance.SCHEDULENUMBER;
+
