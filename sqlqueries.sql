@@ -54,7 +54,7 @@ select reportnumber, reporter, reported from incidentreport where reportnumber i
 (select reportnumber from implication group by reportnumber having count(instancenumber) > 1);                                                                                              
                                                                                               
 --Return the flight instances with their status
-SELECT instanceNumber, [status],
+SELECT instanceNumber, [status]
 FROM flightInstance 
 INNER JOIN flightschedule
 ON flightInstance.scheduleNumber = flightschedule.scheduleNumber
