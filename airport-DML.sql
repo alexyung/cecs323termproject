@@ -6,12 +6,12 @@ INSERT INTO airport (FAAAbbreviation, airportName, city,state, country) VALUES (
 INSERT INTO airport (FAAAbbreviation, airportName, city,state, country) VALUES ('ICN', 'Incheon International Airport', 'Incheon', 'N/A' ,'South Korea');
 
 
-INSERT INTO airline (airlineName, hqCity, hqState,hqCountry, range) VALUES ('Fly Free', 'Sacramento', 'California', 'USA', 'Domestic');
-INSERT INTO airline (airlineName, hqCity, hqState,hqCountry, range) VALUES ('LB Transit', 'Long Beach', 'California', 'USA', 'Domestic');
-INSERT INTO airline (airlineName, hqCity, hqState,hqCountry, range) VALUES ('Air Busing', 'Seattle', 'Washington', 'USA', 'Local');
-INSERT INTO airline (airlineName, hqCity, hqState,hqCountry, range) VALUES ('Local Queens', 'Queens', 'New York', 'USA', 'Local');
-INSERT INTO airline (airlineName, hqCity, hqState,hqCountry, range) VALUES ('Cheap Flights Now International', 'Houston', 'Texas', 'USA', 'International');
-INSERT INTO airline (airlineName, hqCity, hqState,hqCountry, range) VALUES ('South Korean Flights International', 'Incheon', 'N/A', 'South Korea', 'International');
+INSERT INTO airline (airlineName, hqCity, hqState,hqCountry, range) VALUES ('Fly Free', 'Sacramento', 'California', 'USA', 'DOMESTIC');
+INSERT INTO airline (airlineName, hqCity, hqState,hqCountry, range) VALUES ('LB Transit', 'Long Beach', 'California', 'USA', 'DOMESTIC');
+INSERT INTO airline (airlineName, hqCity, hqState,hqCountry, range) VALUES ('Air Busing', 'Seattle', 'Washington', 'USA', 'LOCAL');
+INSERT INTO airline (airlineName, hqCity, hqState,hqCountry, range) VALUES ('Local Queens', 'Queens', 'New York', 'USA', 'LOCAL');
+INSERT INTO airline (airlineName, hqCity, hqState,hqCountry, range) VALUES ('Cheap Flights Now International', 'Houston', 'Texas', 'USA', 'INTERNATIONAL');
+INSERT INTO airline (airlineName, hqCity, hqState,hqCountry, range) VALUES ('South Korean Flights International', 'Incheon', 'N/A', 'South Korea', 'INTERNATIONAL');
 
 
 INSERT INTO airlineservice (FAAAbreviation, airlineName) VALUES ('LGB', 'Fly Free');
