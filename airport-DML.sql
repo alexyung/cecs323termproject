@@ -4,7 +4,7 @@ INSERT INTO airport (FAAAbbreviation, airportName, city,state, country) VALUES
 ('JWA', 'John Wayne Airport', 'Santa Ana', 'California' ,'USA'),
 ('JFK', 'John F. Kennedy International Airport', 'Queens', 'New York' ,'USA'),
 ('BFI', 'King County International Airport', 'Seattle', 'Washington' ,'USA'),
-('ICN', 'Incheon International Airport', 'Incheon', 'N/A' ,'South Korea');
+('ICN', 'Incheon International Airport', 'Incheon', 'N/A' ,'South Korea'),
 ('PEK', 'Beijing Capital International Airport', 'Beijing', 'N/A' ,'China');
 
 
