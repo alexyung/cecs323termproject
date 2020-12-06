@@ -42,3 +42,10 @@ group by arrivalAirport having count(instancenumber) = max("Arrivals"));
 
 --Flight instances that departed more than 30 minutes late.
 select instancenumber from flightinstance natural join flightschedule where {fn timestampdiff(SQL_TSI_MINUTE, departureactual, departuretime)} >30;
+                                                                                              
+--All incidents that occurred between multiple flight instances departing from different airports.
+select reportnumber, reporter, reported from incidentreport where reportnumber in                                                                                              
+(select reportnumber from implication group by reportnumber having count(instancenumber) > 1);                                                                                              
+                                                                                              
+                                                                                              
+                                                                                              
