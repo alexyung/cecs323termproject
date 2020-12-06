@@ -55,7 +55,17 @@ INSERT INTO plane(FAANumber, airlineName, manufacturer, model, passengerLimit, p
 (5001,'Cheap Flights Now International', 'Boeing', 'AM50', 50, 'AirMax50'),
 (5002,'South Korean Flights International', 'Boeing', 'AM80', 80, 'AirMax80');
 
+INSERT INTO plane(FAANumber, airlineName, manufacturer, model, passengerLimit) VALUES 
+(300, 'LB Transit', 'Airbus', 'A321', 200),
+(321, 'Air Busing', 'Airbus', 'A322', 250),
+(340, 'Cheap Flights Now International', 'Airbus', 'A380', 500),
+(203, 'South Korean Flights International', 'Airbus', 'A380', 583);
+
 --  NEeds fixing
+/*
+INSERT INTO flightSchedule(scheduleNumber, departureAirport, arrivalAirport, airlineName, DepartureTime, ArrivalTime, flightDuration) VALUES 
+(101, 'LGB', 'LAX','Fly Free',     '12:00:00', '13:00:00', INTEGER({fn TIMESTAMPDIFF(SQL_TSI_MINUTE, TIMESTAMP(CURRENT_DATE||' '||'12:00:00'), TIMESTAMP(CURRENT_DATE||' '||'13:00:00'))}));
+*/
 INSERT INTO flightSchedule(scheduleNumber, departureAirport, arrivalAirport, airlineName, DepartureTime, ArrivalTime, flightDuration) VALUES 
 (101, 'LGB', 'LAX','Fly Free',     '12:00:00', '13:00:00', INTEGER({fn TIMESTAMPDIFF(SQL_TSI_MINUTE, TIMESTAMP(CURRENT_DATE||' '||'12:00:00'), TIMESTAMP(CURRENT_DATE||' '||'13:00:00'))})),
 (102, 'LAX', 'LGB','Fly Free',     '15:00:00', '16:00:00', INTEGER({fn TIMESTAMPDIFF(SQL_TSI_MINUTE, TIMESTAMP(CURRENT_DATE||' '||'15:00:00'), TIMESTAMP(CURRENT_DATE||' '||'16:00:00'))})),
@@ -76,16 +86,23 @@ INSERT INTO flightSchedule(scheduleNumber, departureAirport, arrivalAirport, air
 (117, 'LAX', 'ICN','Cheap Flights Now International', '05:30:00', '11:00:00', INTEGER({fn TIMESTAMPDIFF(SQL_TSI_MINUTE, TIMESTAMP(CURRENT_DATE||' '||'05:30:00'), TIMESTAMP(CURRENT_DATE||' '||'11:00:00'))})),
 (118, 'ICN', 'LAX','Cheap Flights Now International', '12:00:00', '17:30:00', INTEGER({fn TIMESTAMPDIFF(SQL_TSI_MINUTE, TIMESTAMP(CURRENT_DATE||' '||'12:00:00'), TIMESTAMP(CURRENT_DATE||' '||'17:30:00'))})),
 (119, 'JFK', 'PEK','Cheap Flights Now International', '06:00:00', '21:00:00', INTEGER({fn TIMESTAMPDIFF(SQL_TSI_MINUTE, TIMESTAMP(CURRENT_DATE||' '||'06:00:00'), TIMESTAMP(CURRENT_DATE||' '||'21:00:00'))})),
-(120, 'PEK', 'JFK','Cheap Flights Now International', '22:00:00', '13:00:00', INTEGER({fn TIMESTAMPDIFF(SQL_TSI_MINUTE, TIMESTAMP(CURRENT_DATE||' '||'22:00:00'), timestamp(DATE({fn TIMESTAMPADD(SQL_TSI_DAY, 1, CURRENT_TIMESTAMP)})||' '||'13:00:00'))}),
+(120, 'PEK', 'JFK','Cheap Flights Now International', '22:00:00', '13:00:00', INTEGER({fn TIMESTAMPDIFF(SQL_TSI_MINUTE, TIMESTAMP(CURRENT_DATE||' '||'22:00:00'), TIMESTAMP(DATE({fn TIMESTAMPADD(SQL_TSI_DAY, 1, CURRENT_TIMESTAMP)})||' '||'13:00:00'))})),
 (121, 'ICN', 'LAX','South Korean Flights International', '02:00:00', '15:00:00', INTEGER({fn TIMESTAMPDIFF(SQL_TSI_MINUTE, TIMESTAMP(CURRENT_DATE||' '||'02:00:00'), TIMESTAMP(CURRENT_DATE||' '||'15:00:00'))})),
 (122, 'LAX', 'ICN','South Korean Flights International', '02:00:00', '15:00:00', INTEGER({fn TIMESTAMPDIFF(SQL_TSI_MINUTE, TIMESTAMP(CURRENT_DATE||' '||'02:00:00'), TIMESTAMP(CURRENT_DATE||' '||'15:00:00'))})),
 (123, 'ICN', 'PEK','South Korean Flights International', '10:00:00', '12:00:00', INTEGER({fn TIMESTAMPDIFF(SQL_TSI_MINUTE, TIMESTAMP(CURRENT_DATE||' '||'10:00:00'), TIMESTAMP(CURRENT_DATE||' '||'12:00:00'))})),
 (124, 'PEK', 'ICN','South Korean Flights International', '13:00:00', '15:00:00', INTEGER({fn TIMESTAMPDIFF(SQL_TSI_MINUTE, TIMESTAMP(CURRENT_DATE||' '||'13:00:00'), TIMESTAMP(CURRENT_DATE||' '||'15:00:00'))}));
 
 
-
-
 --flight instance
+/*
+INSERT INTO flightInstance(instancenumber, schedulenumber, date, departureactual, arrivalactual, flightduration, planenumber) VALUES
+(100, 101, '2020-12-21', '12:00:00', '13:00:00', INTEGER({fn TIMESTAMPDIFF(SQL_TSI_MINUTE, TIMESTAMP('2020-12-21'||' '||'12:00:00'), TIMESTAMP('2020-12-21'||' '||'13:00:00'))}), planenumber),
+(100, 102, '2020-12-21', '15:03:00', '16:10:00', INTEGER({fn TIMESTAMPDIFF(SQL_TSI_MINUTE, TIMESTAMP('2020-12-21'||' '||'15:03:00'), TIMESTAMP('2020-12-21'||' '||'15:03:00'))}), planenumber),
+(100, 103, '2020-12-15', '10:10:00', '11:32:00', INTEGER({fn TIMESTAMPDIFF(SQL_TSI_MINUTE, TIMESTAMP('2020-12-21'||' '||'10:10:00'), TIMESTAMP('2020-12-21'||' '||'11:32:00'))}), planenumber),
+(100, 104, '2020-12-15', '10:10:00', '11:32:00', INTEGER({fn TIMESTAMPDIFF(SQL_TSI_MINUTE, TIMESTAMP('2020-12-21'||' '||'10:10:00'), TIMESTAMP('2020-12-21'||' '||'11:32:00'))}), planenumber),
+
+*/
+
 
 -- unchargeableFlgiht
 -- chargable flight
