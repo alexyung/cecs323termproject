@@ -45,22 +45,41 @@ INSERT INTO plane(FAANumber, airlineName, manufacturer, model, passengerLimit, p
 INSERT INTO plane(FAANumber, airlineName, manufacturer, model, passengerLimit, planeName) VALUES ( 5001,'Cheap Flights Now International', 'Boeing', 'AM50', 50, 'AirMax50');
 INSERT INTO plane(FAANumber, airlineName, manufacturer, model, passengerLimit, planeName) VALUES ( 5002,'South Korean Flights International', 'Boeing', 'AM80', 80, 'AirMax80');
 
-INSERT INTO flightSchedule(scheduleNumber, departureAirport, arrivalAirport, airlineName, departureTime, ArrivalTime) VALUES (101, 'LGB', 'LAX','Fly Free', '12:00:00', '14:00:00', {fn TIMESTAMPDIFF(SQL_TSI_MINUTE, arrivalTime, departureTime)} );
+--  NEeds fixing
+--INSERT INTO flightSchedule(scheduleNumber, departureAirport, arrivalAirport, airlineName, DEPARTURETIME, ArrivalTime, flightDuration) VALUES (101, 'LGB', 'LAX','Fly Free', '12:00:00', '14:00:00', {fn TIMESTAMPDIFF(SQL_TSI_MINUTE, arrivalTime, departureTime)} );
+
+
+--flight instance
+
+-- unchargeableFlgiht
+-- chargable flight
+
+INSERT INTO AMENITY (TYPE) VALUES ('Water');
+INSERT INTO AMENITY (TYPE) VALUES ('Soda');
+INSERT INTO AMENITY (TYPE) VALUES ('Meal Plan 1');
+INSERT INTO AMENITY (TYPE) VALUES ('Meal Plan 2');
+INSERT INTO AMENITY (TYPE) VALUES ('Meal Plan 3');
+INSERT INTO AMENITY (TYPE) VALUES ('PIzza');
+INSERT INTO AMENITY (TYPE) VALUES ('Salmon');
+INSERT INTO AMENITY (TYPE) VALUES ('TV');
+INSERT INTO AMENITY (TYPE) VALUES ('Internet');
+
+-- sale
+
+--crew member fix
+--INSERT INTO crewMEMBER (FAACREWNUMBER,SUBSTITUTENUMBER,LASTNAME,FIRSTNAME, BACKGROUNDCHECK, ROLE , SCHEDULENUMBER) VALUES (1,10, 'Bui', 'Taylor', 'True','Flight Attendant', 10);
+
+-- doesnt work because crew member doesnt work
+
+INSERT INTO INCIDENTREPORT (REPORTNUMBER,REPORTER,REPORTED,INCIDENT, TIMESTAMP,DETAIL) VALUES (1, 1, 2, 'Attitude','1:00:00','Crew member 2 was giving crew member 1 attitude');
+INSERT INTO INCIDENTREPORT (REPORTNUMBER,REPORTER,REPORTED,INCIDENT, TIMESTAMP,DETAIL) VALUES (2, 2, 1, 'Lazy','1:00:00','Crew member 1 was not doing his work');
+INSERT INTO INCIDENTREPORT (REPORTNUMBER,REPORTER,REPORTED,INCIDENT, TIMESTAMP,DETAIL) VALUES (3, 3, 4, 'Skipped work','14:00:00','Crew member 4 skipped work');
+INSERT INTO INCIDENTREPORT (REPORTNUMBER,REPORTER,REPORTED,INCIDENT, TIMESTAMP,DETAIL) VALUES (4, 5, 1, 'Not doing his job','5:25:00','Crew member 1 standing around while customers need help');
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+-- implications
 
 
