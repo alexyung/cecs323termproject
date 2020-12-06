@@ -25,7 +25,13 @@ order by airlinename, schedulenumber, role desc;
 select a.departureAirport, a.arrivalAirport as "Stopover", b.arrivalAirport from flightschedule a inner join flightschedule b on a.arrivalAirport = b.departureAirport;
 
 --Management reports of mifly information that is related to flight schedules, including arriving flights per city, departing flights per city, list of airlines in each service category, crews that fly multiple flights in a single day. 
+select city, count(instanceNumber) from airport inner join flightschedule on airport.FAAAbbreviation = flightschedule.arrivalAirport natural join flightinstance group by city;
 
+select city, count(instanceNumber) from airport inner join flightschedule on airport.FAAAbbreviation = flightschedule.departureAirport natural join flightinstance group by city;
+
+select airlinename, range from airline order by range;
+
+--select lastname, firstname, date from crewmember
 
 --A list of all incident reports by flight instance
 select instancenumber, reportnumber, reporter, reported, incident, date from incidentreport natural join implication natural join flightinstance
