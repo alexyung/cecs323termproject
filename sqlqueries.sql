@@ -53,5 +53,11 @@ select instancenumber from flightinstance natural join flightschedule where {fn 
 select reportnumber, reporter, reported from incidentreport where reportnumber in                                                                                              
 (select reportnumber from implication group by reportnumber having count(instancenumber) > 1);                                                                                              
                                                                                               
-                                                                                              
-                                                                                              
+--Return the flight instances with their status
+SELECT instanceNumber, [status],
+FROM flightInstance 
+INNER JOIN flightschedule
+ON flightInstance.scheduleNumber = flightschedule.scheduleNumber
+CASE WHEN (FlightInstance.departureActual <= FlightSchedule.departureTime)
+THEN 'ON TIME' ELSE 'DELAYED'
+as 'Status'                                                   
