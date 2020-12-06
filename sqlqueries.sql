@@ -54,10 +54,9 @@ select reportnumber, reporter, reported from incidentreport where reportnumber i
 (select reportnumber from implication group by reportnumber having count(instancenumber) > 1);                                                                                              
                                                                                               
 --Return the flight instances with their status
-SELECT instanceNumber, [status]
-FROM flightInstance 
-INNER JOIN flightschedule
-ON flightInstance.scheduleNumber = flightschedule.scheduleNumber
-CASE WHEN (FlightInstance.departureActual <= FlightSchedule.departureTime)
-THEN 'ON TIME' ELSE 'DELAYED'
-as 'Status'                                                   
+select instancenumber,
+case when flightinstance.departureActual <= flightSchedule.departureTime THEN 'ON TIME' 
+ELSE 'DELAYED' END AS Status
+from
+flightinstance natural
+join flightschedule
