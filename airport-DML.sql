@@ -43,9 +43,9 @@ INSERT INTO plane(FAANumber, airlineName, manufacturer, model, passengerLimit, p
 INSERT INTO plane(FAANumber, airlineName, manufacturer, model, passengerLimit, planeName) VALUES ( 2001,'LB Transit', 'Boeing', 'AB5', 10, 'Airbus5');
 INSERT INTO plane(FAANumber, airlineName, manufacturer, model, passengerLimit, planeName) VALUES ( 500,'Local Queens', 'Boeing', 'AB10', 10, 'Airbus10');
 INSERT INTO plane(FAANumber, airlineName, manufacturer, model, passengerLimit, planeName) VALUES ( 5001,'Cheap Flights Now International', 'Boeing', 'AM50', 50, 'AirMax50');
-INSERT INTO plane(FAANumber, airlineName, manufacturer, model, passengerLimit, planeName) VALUES ( 5001,'South Korean Flights International', 'Boeing', 'AM80', 80, 'AirMax80');
+INSERT INTO plane(FAANumber, airlineName, manufacturer, model, passengerLimit, planeName) VALUES ( 5002,'South Korean Flights International', 'Boeing', 'AM80', 80, 'AirMax80');
 
-INSERT INTO flightSchedule(scheduleNumber, departureAirport, arrivalAirport, airlineName, departureTime, ArrivalTime) VALUES ( )
+INSERT INTO flightSchedule(scheduleNumber, departureAirport, arrivalAirport, airlineName, departureTime, ArrivalTime) VALUES (101, 'LGB', 'LAX','Fly Free', '12:00:00', '14:00:00', {fn TIMESTAMPDIFF(SQL_TSI_MINUTE, arrivalTime, departureTime)} );
 
 
 
