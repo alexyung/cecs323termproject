@@ -85,6 +85,7 @@ CREATE TABLE flightInstance (
     departureActual TIME NOT NULL,
     arrivalActual TIME NOT NULL,
     flightDurationActual INTEGER NOT NULL,
+    status BOOLEAN NOT NULL,
     planeNumber INTEGER NOT NULL,
     CONSTRAINT flightinstance_PK PRIMARY KEY(instanceNumber),
     CONSTRAINT fi_fs_FK FOREIGN KEY (scheduleNumber)
