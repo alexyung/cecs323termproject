@@ -66,4 +66,11 @@ flightSchedule.DEPARTUREAIRPORT AS "DEP_AIRPORT", flightInstance.DEPARTUREACTUAL
 flightSchedule.ARRIVALAIRPORT As "ARR_AIRPORT", flightInstance.ARRIVALACTUAL AS "ARR_AIRPORT_ARRIVALTIME"
 FROM flightInstance
 INNER JOIN flightSchedule ON flightSchedule.SCHEDULENUMBER = flightInstance.SCHEDULENUMBER;
+                                                                                              
+    
+-- Returns crew number, last name, first name , subsitute number, subsittute last name, substitue first name                                                                                              
+select a.faacrewnumber, a.lastname, a.firstname, b.faacrewnumber as "SUB Number", b.lastname as "Sub LastName", b.firstname as "Sub FirstName" 
+from crewmember as a
+join crewmember as b
+on a.substitutenumber= b.faacrewnumber;
 
