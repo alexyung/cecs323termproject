@@ -117,7 +117,7 @@ INNER JOIN flightSchedule ON flightSchedule.SCHEDULENUMBER = flightInstance.SCHE
 order by flightduration asc;
 
 -- Returns crew number, last name, first name , subsitute number, substitute last name, substitute first name                                                                                              
-select a.faacrewnumber, a.lastname, a.firstname, b.faacrewnumber as "SUB Number", b.lastname as "Sub LastName", b.firstname as "Sub FirstName" 
+select a.faacrewnumber, a.lastname, a.firstname, b.faacrewnumber as "Sub Number", b.lastname as "Sub LastName", b.firstname as "Sub FirstName" 
 from crewmember as a
 join crewmember as b
 on a.substitutenumber= b.faacrewnumber;
