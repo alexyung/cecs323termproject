@@ -36,23 +36,23 @@ select city, count(instanceNumber) as "Departing Flights" from airport inner joi
 --airlines by service category
 select range, airlinename from airline order by range;
 
---all airlines with flights that conflict with their locality
+--all airlines with flight schedules that conflict with their range
 --get international airlines with local/domestic flights
-select airlinename, range, schedulenumber
+select airlinename, range, schedulenumber, departureAirport, arrivalAirport
 from airline inner join flightschedule using (airlinename)
 inner join airport arr on flightschedule.ARRIVALAIRPORT = arr.FAAABBREVIATION
 inner join airport dep on flightschedule.DEPARTUREAIRPORT = dep.FAAABBREVIATION
 where range = 'INTERNATIONAL' and arr.country = dep.country
 union
     --union with domestic airlines that have local/international flights
-select airlinename, range, schedulenumber
+select airlinename, range, schedulenumber, departureAirport, arrivalAirport
 from airline inner join flightschedule using (airlinename)
 inner join airport arr on flightschedule.ARRIVALAIRPORT = arr.FAAABBREVIATION
 inner join airport dep on flightschedule.DEPARTUREAIRPORT = dep.FAAABBREVIATION
 where range = 'DOMESTIC' and (coalesce(arr.state, 'N/A') = coalesce(dep.state, 'N/A') or arr.country != dep.country)
 union
     --union with local airlines that have domestic/international flights
-select airlinename, range, schedulenumber
+select airlinename, range, schedulenumber, departureAirport, arrivalAirport
 from airline inner join flightschedule using (airlinename)
 inner join airport arr on flightschedule.ARRIVALAIRPORT = arr.FAAABBREVIATION
 inner join airport dep on flightschedule.DEPARTUREAIRPORT = dep.FAAABBREVIATION
@@ -70,20 +70,23 @@ where "Attendant Count" not between 2 and 5 or "Navigator Count" != 1 or "Co-Pil
 --A list of all incident reports by flight instance
 select instancenumber, reportnumber, rr.FIRSTNAME as "REPORTER FIRST NAME", rr.LASTNAME as "REPORTER LAST NAME", rd.FIRSTNAME as "REPORTED FIRST NAME", rd.LASTNAME as "REPORTED LAST NAME", incident, date from incidentreport natural join implication natural join flightinstance
 inner join crewmember rr on incidentreport.reporter = rr.FAACREWNUMBER
-inner join crewmember rd on incidentreport.reporter = rd.FAACREWNUMBER
+inner join crewmember rd on incidentreport.reported = rd.FAACREWNUMBER
 order by instancenumber;
 
 --Flight instances that are scheduled to depart in three days
-select instancenumber, date, departureAirport, departureTime, arrivalAirport, arrivalTime from flightinstance natural join flightschedule where {fn TIMESTAMPDIFF(SQL_TSI_DAY, TIMESTAMP(CURRENT_DATE||' 00:00:00'), TIMESTAMP(date||' '||'00:00:00'))} <= 3;
+select instancenumber, date, departureAirport, departureTime, arrivalAirport, arrivalTime, {fn TIMESTAMPDIFF(SQL_TSI_DAY, TIMESTAMP(CURRENT_DATE||' 00:00:00'), TIMESTAMP(date||' '||'00:00:00'))} as "DAYS TO DEPART"
+from flightinstance natural join flightschedule where {fn TIMESTAMPDIFF(SQL_TSI_DAY, TIMESTAMP(CURRENT_DATE||' 00:00:00'), TIMESTAMP(date||' '||'00:00:00'))} <= 3;
 
 --All flight instances that arrived in the busiest airport in the last week
-select date, departureAirport, departureActual, arrivalAirport, arrivalActual 
-from flightinstance natural join flightschedule 
+select date, departureAirport, departureActual, arrivalAirport, arrivalActual,{fn TIMESTAMPDIFF(SQL_TSI_DAY, timestamp(date||' 00:00:00'), timestamp(CURRENT_DATE||' 00:00:00'))}
+from flightinstance natural join flightschedule
 where arrivalAirport in
-    (select arrivalAirport from
-        (select arrivalAirport, count(instancenumber) as "Arrivals" from flightschedule natural join flightinstance where {fn TIMESTAMPDIFF(SQL_TSI_DAY, timestamp(CURRENT_DATE||' 00:00:00'), timestamp(date||' 00:00:00'))} <= 7 group by arrivalAirport) arrivalcount
-    group by arrivalAirport having count(instancenumber) = max("Arrivals"))
-and {fn TIMESTAMPDIFF(SQL_TSI_DAY, timestamp(CURRENT_DATE||' 00:00:00'), timestamp(date||' 00:00:00'))} <= 7;
+(select arrivalAirport from
+    (select arrivalAirport, count(instancenumber) as "Arrivals" from flightschedule natural join flightinstance where {fn TIMESTAMPDIFF(SQL_TSI_DAY, timestamp(date||' 00:00:00'), timestamp(CURRENT_DATE||' 00:00:00'))} between 0 and 7 group by arrivalAirport) arrivalCount
+ where "Arrivals" =
+    (select max("Arrivals") from
+        (select arrivalAirport, count(instancenumber) as "Arrivals" from flightschedule natural join flightinstance where {fn TIMESTAMPDIFF(SQL_TSI_DAY, timestamp(date||' 00:00:00'), timestamp(CURRENT_DATE||' 00:00:00'))} between 0 and 7 group by arrivalAirport) arrivalcount))
+and {fn TIMESTAMPDIFF(SQL_TSI_DAY, timestamp(date||' 00:00:00'), timestamp(CURRENT_DATE||' 00:00:00'))} between 0 and 7;
 
 --Flight instances that departed more than 30 minutes late.
 select instancenumber, departureActual, departureTime, {fn TIMESTAMPDIFF(SQL_TSI_MINUTE, timestamp(date||' '||departureTime), timestamp(date||' '||departureActual))} as "LATE BY" 
@@ -116,8 +119,8 @@ FROM flightInstance
 INNER JOIN flightSchedule ON flightSchedule.SCHEDULENUMBER = flightInstance.SCHEDULENUMBER
 order by flightduration asc;
 
--- Returns crew number, last name, first name , subsitute number, substitute last name, substitute first name                                                                                              
-select a.faacrewnumber, a.lastname, a.firstname, b.faacrewnumber as "Sub Number", b.lastname as "Sub LastName", b.firstname as "Sub FirstName" 
+-- Returns crew number, last name, first name , subsitute number, subsittute last name, substitue first name                                                                                              
+select a.faacrewnumber, a.lastname, a.firstname, b.faacrewnumber as "SUB Number", b.lastname as "Sub LastName", b.firstname as "Sub FirstName" 
 from crewmember as a
 join crewmember as b
 on a.substitutenumber= b.faacrewnumber;
