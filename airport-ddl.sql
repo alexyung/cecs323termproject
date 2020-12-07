@@ -1,7 +1,6 @@
-/*
 --DROP ALL TABLES AND INDICES
 DROP INDEX flightschedule_CK;
-DROP INDEX flightinstance_CK
+DROP INDEX flightinstance_CK;
 DROP INDEX incidentreport_CK;
 DROP TABLE airlineservice;
 DROP TABLE sale;
@@ -16,10 +15,10 @@ DROP TABLE airport;
 DROP TABLE plane;
 DROP TABLE airline;
 DROP TABLE amenity;
-*/
+
 
 CREATE TABLE airport ( 
-    FAAAbbreviation VARCHAR(5) NOT NULL,
+    FAAAbbreviation VARCHAR(5),
     airportName VARCHAR(50) NOT NULL, 
     city VARCHAR(50) NOT NULL,
     state VARCHAR(50),
@@ -48,7 +47,7 @@ CREATE TABLE airlineservice (
 );
 
 CREATE TABLE plane (
-    FAANumber INTEGER NOT NULL, 
+    FAANumber INTEGER, 
     airlineName VARCHAR(50) NOT NULL, 
     manufacturer VARCHAR (50) NOT NULL,
     model VARCHAR (50) NOT NULL,
@@ -60,9 +59,10 @@ CREATE TABLE plane (
 );
 
 CREATE TABLE flightSchedule(
-    scheduleNumber INTEGER NOT NULL, 
+    scheduleNumber INTEGER, 
     departureAirport VARCHAR(5) NOT NULL, 
     arrivalAirport VARCHAR(5) NOT NULL,
+    CONSTRAINT nosameairport CHECK (departureAirport != arrivalAirport),
     airlineName VARCHAR (50) NOT NULL,
     departureTime TIME NOT NULL, 
     arrivalTime TIME NOT NULL, 
@@ -79,7 +79,7 @@ CREATE TABLE flightSchedule(
 CREATE UNIQUE INDEX flightschedule_CK ON flightschedule (departureAirport, arrivalAirport, airlineName, departureTime, arrivalTime);
 
 CREATE TABLE flightInstance (
-    instanceNumber INTEGER NOT NULL,
+    instanceNumber INTEGER,
     scheduleNumber INTEGER NOT NULL, 
     date DATE NOT NULL, 
     departureActual TIME NOT NULL,
@@ -111,7 +111,7 @@ CREATE TABLE chargeableFlight (
 );
 
 CREATE TABLE amenity (
-    type VARCHAR(50) NOT NULL,
+    type VARCHAR(50),
     CONSTRAINT amenity_PK PRIMARY KEY(type)
 );
 
@@ -126,28 +126,30 @@ CREATE TABLE sale (
 );
 
 CREATE TABLE crewMember (
-    FAACrewNumber INTEGER NOT NULL, 
+    FAACrewNumber INTEGER, 
     substituteNumber INTEGER,
+    CONSTRAINT noselfsub CHECK (substituteNumber != FAACrewNumber),
     lastName VARCHAR(40) NOT NULL,
     firstName VARCHAR(40) NOT NULL, 
     backgroundCheck BOOLEAN NOT NULL, 
-    role VARCHAR (50) NOT NULL, 
+    role VARCHAR (50) NOT NULL,
+    CONSTRAINT role_check CHECK (role in ('Pilot', 'Co-Pilot', 'Navigator', 'Flight Attendant')),
     scheduleNumber INTEGER NOT NULL,
     CONSTRAINT crewmember_PK PRIMARY KEY(FAACrewNumber),
     CONSTRAINT cm_cm_FK FOREIGN KEY (substituteNumber)
         REFERENCES crewMember (FAACrewNumber),
     CONSTRAINT cm_fs_FK FOREIGN KEY (scheduleNumber)
-        REFERENCES flightschedule (scheduleNumber),
-    CONSTRAINT recursive_check CHECK (substituteNumber != FAACrewNumber)
+        REFERENCES flightschedule (scheduleNumber)
 );
 
 CREATE TABLE incidentReport (
-    reportNumber INTEGER NOT NULL, 
+    reportNumber INTEGER, 
     reporter INTEGER NOT NULL, 
     reported INTEGER NOT NULL, 
-    incident VARCHAR(20) NOT NULL, 
-    timestamp TIME NOT NULL, 
-    detail VARCHAR(300),
+    CONSTRAINT noselfreport CHECK (reporter != reported),
+    incident VARCHAR(20), 
+    duration INTEGER NOT NULL, 
+    detail VARCHAR(300) NOT NULL,
     CONSTRAINT incidentreport_PK PRIMARY KEY(reportNumber),
     CONSTRAINT ir_cma_FK FOREIGN KEY (reporter)
         REFERENCES crewmember (FAACrewNumber),
@@ -155,7 +157,7 @@ CREATE TABLE incidentReport (
         REFERENCES crewmember (FAACrewNumber)
 );
 
-CREATE UNIQUE INDEX incidentreport_CK ON incidentreport (reporter, reported, incident, timestamp);
+CREATE UNIQUE INDEX incidentreport_CK ON incidentreport (reporter, reported, incident, duration);
 
 CREATE TABLE implication (
     instanceNumber INTEGER NOT NULL, 
