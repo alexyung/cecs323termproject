@@ -1,65 +1,86 @@
---The list of all airlines for a given airport. 
-select airportname, airlinename from airline natural join airlineservice natural join airport where FAAAbbreviation = 'LAX';
+--1. The list of all airlines for a given airport. 
+select airportname, airlinename 
+from airline natural join airlineservice 
+natural join airport 
+where FAAAbbreviation = 'LAX';
 
---The list of all flights schedules for a given airline. You must be able to sort this list by starting location, destination, longest flight or shortest flight. 
-select airlinename, departureAirport, departureTime, arrivalAirport, arrivalTime from flightschedule where airlinename = 'Air Busing'
+
+--2. The list of all flight schedules for a given airline. You must be able to sort this list by starting location, destination, longest flight or shortest flight. 
+--a. sorted by starting location
+select departureAirport, departureTime, airlinename, arrivalAirport, arrivalTime 
+from flightschedule 
+where airlinename = 'Air Busing'
 order by departureAirport asc;
 
-select airlinename, arrivalAirport, arrivalTime, departureAirport, departureTime from flightschedule where airlinename = 'Air Busing'
+--b. sorted by destination
+select  arrivalAirport, arrivalTime, departureAirport, departureTime, airlinename 
+from flightschedule 
+where airlinename = 'Air Busing'
 order by arrivalAirport asc;
 
-select airlinename, departureAirport, departureTime, arrivalAirport, arrivalTime, flightduration from flightschedule where airlinename = 'Air Busing'
+--c. sorted by longest flight
+select flightduration, airlinename, departureAirport, departureTime, arrivalAirport, arrivalTime 
+from flightschedule 
+where airlinename = 'Air Busing'
 order by flightDuration desc;
 
-select airlinename, departureAirport, departureTime, arrivalAirport, arrivalTime, flightduration from flightschedule where airlinename = 'Air Busing'
+--d. sorted by shortest flight
+select flightduration, airlinename, departureAirport, departureTime, arrivalAirport, arrivalTime
+from flightschedule 
+where airlinename = 'Air Busing'
 order by flightDuration asc;
 
---Flight schedules that charge for extras (water, etc.)
-select distinct schedulenumber, type, departureAirport, departureTime, arrivalAirport, arrivalTime from sale natural join chargeableflight natural join flightinstance natural join flightschedule
+
+--3. Flight schedules that charge for extras (water, etc.)
+select distinct schedulenumber, type, departureAirport, departureTime, arrivalAirport, arrivalTime 
+from sale 
+natural join chargeableflight 
+natural join flightinstance 
+natural join flightschedule
 order by schedulenumber asc;
 
---The crew roster for each flight schedule for each airline
-select airlinename, schedulenumber, role, lastname, firstname from crewmember natural join flightschedule natural join airline
+
+--4. The crew roster for each flight schedule for each airline
+select airlinename, schedulenumber, role, lastname, firstname 
+from crewmember 
+natural join flightschedule 
+natural join airline
 order by airlinename, schedulenumber, role desc;
 
---The trips that are available if you do make one stop over 
-select distinct a.departureAirport, a.arrivalAirport as "Stopover", b.arrivalAirport from flightschedule a inner join flightschedule b on a.arrivalAirport = b.departureAirport 
+
+--5. The trips that are available if you do make one stop over 
+select distinct a.departureAirport, a.arrivalAirport as "Stopover", b.arrivalAirport 
+from flightschedule a 
+inner join flightschedule b on a.arrivalAirport = b.departureAirport 
 where a.departureAirport != b.arrivalAirport;
 
---Management reports of mifly information that is related to flight schedules, including arriving flights per city, departing flights per city, list of airlines in each service category, crews that fly multiple flights in a single day. 
---arriving flights per city
-select city, count(instanceNumber) as "Arriving Flights" from airport inner join flightschedule on airport.FAAAbbreviation = flightschedule.arrivalAirport natural join flightinstance group by city;
 
---departing flights per city
-select city, count(instanceNumber) as "Departing Flights" from airport inner join flightschedule on airport.FAAAbbreviation = flightschedule.departureAirport natural join flightinstance group by city;
+--6. Management reports of mifly information that is related to flight schedules, including arriving flights per city, departing flights per city, list of airlines in each service category, crews that fly multiple flights in a single day. 
+--a. arriving flights per city
+select city, instancenumber, arrivalActual, arrivalAirport, departureActual, departureAirport, date
+from airport 
+inner join flightschedule on airport.FAAAbbreviation = flightschedule.arrivalAirport 
+natural join flightinstance
+order by city;
 
---airlines by service category
-select range, airlinename from airline order by range;
+--b. departing flights per city
+select city, instancenumber, departureActual, departureAirport, arrivalActual, arrivalAirport, date
+from airport 
+inner join flightschedule on airport.FAAAbbreviation = flightschedule.departureAirport 
+natural join flightinstance
+order by city;
 
---all airlines with flight schedules that conflict with their range
---get international airlines with local/domestic flights
-select airlinename, range, schedulenumber, departureAirport, arrivalAirport
-from airline inner join flightschedule using (airlinename)
-inner join airport arr on flightschedule.ARRIVALAIRPORT = arr.FAAABBREVIATION
-inner join airport dep on flightschedule.DEPARTUREAIRPORT = dep.FAAABBREVIATION
-where range = 'INTERNATIONAL' and arr.country = dep.country
-union
-    --union with domestic airlines that have local/international flights
-select airlinename, range, schedulenumber, departureAirport, arrivalAirport
-from airline inner join flightschedule using (airlinename)
-inner join airport arr on flightschedule.ARRIVALAIRPORT = arr.FAAABBREVIATION
-inner join airport dep on flightschedule.DEPARTUREAIRPORT = dep.FAAABBREVIATION
-where range = 'DOMESTIC' and (coalesce(arr.state, 'N/A') = coalesce(dep.state, 'N/A') or arr.country != dep.country)
-union
-    --union with local airlines that have domestic/international flights
-select airlinename, range, schedulenumber, departureAirport, arrivalAirport
-from airline inner join flightschedule using (airlinename)
-inner join airport arr on flightschedule.ARRIVALAIRPORT = arr.FAAABBREVIATION
-inner join airport dep on flightschedule.DEPARTUREAIRPORT = dep.FAAABBREVIATION
-where range = 'LOCAL' and (arr.country != dep.country or coalesce(arr.state, 'N/A') != coalesce(dep.state, 'N/A'));
+--c. airlines by service category
+select range, airlinename 
+from airline 
+order by range;
 
---get all flight schedules with too many or too few crew members
-select * from
+--d. crews that fly multiple flights in a single day
+--NOTE: we discussed on December 07 during your office hours, 
+-- and found that our database model was incorrectly modeled and unable to deal with this query.
+--We agreed on a different query:
+--d. Get all flight schedules who have an incorrect number of crew members.
+select schedulenumber, "Pilot Count", "Co-Pilot Count", "Navigator Count", "Attendant Count" from
 (select schedulenumber, count(faacrewnumber) as "Attendant Count" from flightschedule fs inner join crewmember cm using (schedulenumber) where role = 'Flight Attendant' group by schedulenumber) count1 natural join
 (select schedulenumber, count(faacrewnumber) as "Navigator Count" from flightschedule fs inner join crewmember cm using (schedulenumber) where role = 'Navigator' group by schedulenumber) count2 natural join
 (select schedulenumber, count(faacrewnumber) as "Co-Pilot Count" from flightschedule fs inner join crewmember cm using (schedulenumber) where role = 'Co-Pilot' group by schedulenumber) count3 natural join
@@ -67,18 +88,21 @@ select * from
 where "Attendant Count" not between 2 and 5 or "Navigator Count" != 1 or "Co-Pilot Count" != 1 or "Pilot Count" != 1;
 
 
---A list of all incident reports by flight instance
+--7. A list of all incident reports by flight instance
 select instancenumber, reportnumber, rr.FIRSTNAME as "REPORTER FIRST NAME", rr.LASTNAME as "REPORTER LAST NAME", rd.FIRSTNAME as "REPORTED FIRST NAME", rd.LASTNAME as "REPORTED LAST NAME", incident, date from incidentreport natural join implication natural join flightinstance
 inner join crewmember rr on incidentreport.reporter = rr.FAACREWNUMBER
 inner join crewmember rd on incidentreport.reported = rd.FAACREWNUMBER
 order by instancenumber;
 
---Flight instances that are scheduled to depart in three days
-select instancenumber, date, departureAirport, departureTime, arrivalAirport, arrivalTime, {fn TIMESTAMPDIFF(SQL_TSI_DAY, TIMESTAMP(CURRENT_DATE||' 00:00:00'), TIMESTAMP(date||' '||'00:00:00'))} as "DAYS TO DEPART"
-from flightinstance natural join flightschedule where {fn TIMESTAMPDIFF(SQL_TSI_DAY, TIMESTAMP(CURRENT_DATE||' 00:00:00'), TIMESTAMP(date||' '||'00:00:00'))} <= 3;
 
---All flight instances that arrived in the busiest airport in the last week
-select date, departureAirport, departureActual, arrivalAirport, arrivalActual,{fn TIMESTAMPDIFF(SQL_TSI_DAY, timestamp(date||' 00:00:00'), timestamp(CURRENT_DATE||' 00:00:00'))}
+--8. Flight instances that are scheduled to depart in three days
+select instancenumber, date, departureAirport, departureTime, arrivalAirport, arrivalTime, {fn TIMESTAMPDIFF(SQL_TSI_DAY, TIMESTAMP(CURRENT_DATE||' 00:00:00'), TIMESTAMP(date||' '||'00:00:00'))} as "DAYS TO DEPART"
+from flightinstance natural join flightschedule 
+where {fn TIMESTAMPDIFF(SQL_TSI_DAY, TIMESTAMP(CURRENT_DATE||' 00:00:00'), TIMESTAMP(date||' '||'00:00:00'))} between 0 and 3;
+
+
+--9. All flight instances that arrived in the busiest airport in the last week
+select date, arrivalAirport, arrivalActual, departureAirport, departureActual, {fn TIMESTAMPDIFF(SQL_TSI_DAY, timestamp(date||' 00:00:00'), timestamp(CURRENT_DATE||' 00:00:00'))} as "DAYS SINCE ARRIVAL"
 from flightinstance natural join flightschedule
 where arrivalAirport in
 (select arrivalAirport from
@@ -88,22 +112,31 @@ where arrivalAirport in
         (select arrivalAirport, count(instancenumber) as "Arrivals" from flightschedule natural join flightinstance where {fn TIMESTAMPDIFF(SQL_TSI_DAY, timestamp(date||' 00:00:00'), timestamp(CURRENT_DATE||' 00:00:00'))} between 0 and 7 group by arrivalAirport) arrivalcount))
 and {fn TIMESTAMPDIFF(SQL_TSI_DAY, timestamp(date||' 00:00:00'), timestamp(CURRENT_DATE||' 00:00:00'))} between 0 and 7;
 
---Flight instances that departed more than 30 minutes late.
+
+--10. Flight instances that departed more than 30 minutes late.
 select instancenumber, departureActual, departureTime, {fn TIMESTAMPDIFF(SQL_TSI_MINUTE, timestamp(date||' '||departureTime), timestamp(date||' '||departureActual))} as "LATE BY" 
 from flightinstance natural join flightschedule 
 where {fn TIMESTAMPDIFF(SQL_TSI_MINUTE, timestamp(date||' '||departureTime), timestamp(date||' '||departureActual))} > 30;
-                                                                                              
---All incidents that occurred between multiple flight instances and their flight instances.
-select reportnumber, rr.firstname||' '||rr.lastname as "REPORTER NAME", rs.instancenumber as "REPORTER INSTANCE", rd.FIRSTNAME||' '||rd.lastname as "REPORTED NAME", ds.instancenumber as "REPORTED INSTANCE", incident, detail
-from incidentreport inc inner join crewmember rr ON inc.REPORTER = rr.FAACREWNUMBER
-inner join crewmember rd on inc.REPORTED = rd.FAACREWNUMBER
-inner join flightinstance rs on rr.SCHEDULENUMBER = rs.SCHEDULENUMBER
-inner join flightinstance ds on rd.SCHEDULENUMBER = ds.SCHEDULENUMBER
-where reportnumber in                                                                                              
-    (select reportnumber from implication group by reportnumber having count(instancenumber) > 1);   
-                                                                           
-                                                                                              
---Return the flight instances with their status
+         
+
+--11. Personal business rule queries                                                                                     
+--a. All incidents that occurred between multiple flight instances and their flight instances.
+select e.reportnumber, d.instancenumber as "INSTANCE 1", d.departureactual as "DEPARTURE 1", a.departureairport as "ORIGIN 1",
+ d.ARRIVALACTUAL as "ARRIVAL 1", a.ARRIVALAIRPORT as "DESTINATION 1",
+ f.instancenumber as "INSTANCE 2", f.DEPARTUREACTUAL as "DEPARTURE 2", b.DEPARTUREAIRPORT as "ORIGIN 2",
+ f.ARRIVALACTUAL as "ARRIVAL 2", b.ARRIVALAIRPORT as "DESTINATION 2", incident, detail
+from (implication c natural join flightinstance d natural join flightschedule a)
+inner join (implication e natural join flightinstance f natural join flightschedule b) using (reportnumber)
+natural join incidentreport
+where reportnumber in(
+    select reportnumber
+    from incidentreport natural join implication
+    group by reportnumber
+    having count(instancenumber)>1)
+and d.INSTANCENUMBER > f.INSTANCENUMBER;
+                                             
+                                                                                                                                           
+--b. Return the flight instances with their status
 select instancenumber, departuretime, departureActual, arrivaltime, arrivalactual,
 case when flightinstance.departureActual <= flightSchedule.departureTime THEN 'ON TIME' 
 ELSE 'DELAYED' END AS Status
@@ -111,7 +144,8 @@ from flightinstance
 natural join flightschedule
 order by status, instancenumber;
 
---Return flight instances with departure time, arrival time, and flight duration
+
+--c. Return flight instances with departure time, arrival time, and flight duration
 SELECT flightInstance.INSTANCENUMBER AS "INSTANCE NUMBER", flightInstance.FLIGHTDURATIONACTUAL AS "FLIGHT DURATION",
 flightSchedule.DEPARTUREAIRPORT AS "DEPARTURE AIRPORT", flightInstance.DEPARTUREACTUAL AS "DEPARTURE TIME", 
 flightSchedule.ARRIVALAIRPORT As "ARRIVAL AIRPORT", flightInstance.ARRIVALACTUAL AS "ARRIVAL TIME"
@@ -119,7 +153,8 @@ FROM flightInstance
 INNER JOIN flightSchedule ON flightSchedule.SCHEDULENUMBER = flightInstance.SCHEDULENUMBER
 order by flightduration asc;
 
--- Returns crew number, last name, first name , subsitute number, subsittute last name, substitue first name                                                                                              
+
+--d. Returns crew number, last name, first name , subsitute number, subsittute last name, substitue first name                                                                                              
 select a.faacrewnumber, a.lastname, a.firstname, b.faacrewnumber as "SUB Number", b.lastname as "Sub LastName", b.firstname as "Sub FirstName" 
 from crewmember as a
 join crewmember as b
