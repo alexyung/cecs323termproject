@@ -32,7 +32,7 @@ order by flightDuration asc;
 
 
 --3. Flight schedules that charge for extras (water, etc.)
-select distinct schedulenumber, type, departureAirport, departureTime, arrivalAirport, arrivalTime 
+select distinct schedulenumber, type, price, departureAirport, departureTime, arrivalAirport, arrivalTime 
 from sale 
 natural join chargeableflight 
 natural join flightinstance 

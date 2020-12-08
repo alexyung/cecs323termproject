@@ -118,6 +118,7 @@ CREATE TABLE amenity (
 CREATE TABLE sale (
     instanceNumber INTEGER NOT NULL, 
     type VARCHAR(50) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
     CONSTRAINT sale_PK PRIMARY KEY(instanceNumber, type),
     CONSTRAINT s_cf_FK FOREIGN KEY (instanceNumber)
         REFERENCES chargeableflight (instanceNumber),
